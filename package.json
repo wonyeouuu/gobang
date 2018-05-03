@@ -13,6 +13,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "ramda": "^0.25.0",
     "vue": "^2.5.2",
     "vue-class-component": "^6.2.0",
     "vue-router": "^3.0.1"
