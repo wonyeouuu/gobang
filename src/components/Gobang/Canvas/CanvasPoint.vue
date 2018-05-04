@@ -1,27 +1,13 @@
 <script>
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import point from '@/mixins/point'
 
 @Component({
+  mixins: [point],
+
   props: {
     context: { required: true },
-
-    x: {
-      type: Number,
-      required: true,
-    },
-
-    y: {
-      type: Number,
-      required: true,
-    },
-
-    radius: {
-      type: Number,
-      required: true,
-    },
-
-    state: { required: true },
   },
 })
 export default class CanvasPoint extends Vue {
@@ -29,18 +15,6 @@ export default class CanvasPoint extends Vue {
     return {
       cleanSnapshot: null,
     }
-  }
-
-  get color () {
-    if (this.$props.state === true || this.$props.state === null) {
-      return 'black'
-    } else if (this.$props.state === false) {
-      return 'white'
-    }
-  }
-
-  get hasNotSet () {
-    return this.$props.state === null
   }
 
   render () {
@@ -57,11 +31,7 @@ export default class CanvasPoint extends Vue {
       )
     }
 
-    const radius = this.hasNotSet
-      ? this.$props.radius / 5
-      : this.$props.radius
-
-    this.drawCircle(radius, this.color)
+    this.drawCircle(this.offset, this.color)
 
     // save initial render status
     if (this.$data.cleanSnapshot === null) {

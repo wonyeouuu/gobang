@@ -1,38 +1,71 @@
 <script>
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import CanvasBoard from '@/components/Gobang/CanvasBoard'
-import CanvasPoint from '@/components/Gobang/CanvasPoint'
-import Gobang from '@/core/gobang'
+import Gobang from '@/core/Gobang'
+import {
+  CanvasBoard,
+  CanvasPoint,
+  browserSupport as browserSupportCanvas,
+} from '@/components/Gobang/Canvas'
+import {
+  DomBoard,
+  DomPoint,
+  browserSupport as browserSupportDom,
+} from '@/components/Gobang/Dom'
 
 @Component
 export default class Home extends Vue {
   data () {
-    const game = new Gobang()
-
     return {
-      game,
+      game: new Gobang(),
     }
   }
 
   render () {
+    /**
+     * (coordinate -> void) -> coordinate -> void
+     */
+    const makeMoveHandler = fn => ({ row, col }) => {
+      !this.$data.game.isFinished && fn({ row, col })
+    }
+
     return (
       <div class='home'>
         {this.renderStatusBar()}
-        <CanvasBoard
-          state={this.$data.game.state}
-          onMove={({ row, col }) => {
-            if (!this.$data.game.isFinished) {
-              this.$data.game.add(row, col)
-              this.$forceUpdate()
-            }
-          }}
-          scopedSlots={{
-            default: (props) => {
-              return <CanvasPoint {...{ props }}/>
-            },
-          }}
-        />
+
+        {browserSupportCanvas() && (
+          <CanvasBoard
+            state={this.$data.game.state}
+            onMove={makeMoveHandler(
+              ({ row, col }) => {
+                this.$data.game.add(row, col)
+                this.$forceUpdate()
+              }
+            )}
+            scopedSlots={{
+              default: (props) => <CanvasPoint {...{ props }}/>,
+            }}
+          />
+        )}
+
+        {browserSupportDom() && (
+          <DomBoard
+            state={this.$data.game.state}
+            onMove={makeMoveHandler(
+              ({ row, col }) => {
+                this.$data.game.add(row, col)
+              }
+            )}
+            scopedSlots={{
+              default: (props) => (
+                <DomPoint
+                  {...{ props }}
+                  nativeOnClick={props.handleClick}
+                />
+              ),
+            }}
+          />
+        )}
       </div>
     )
   }
@@ -43,12 +76,12 @@ export default class Home extends Vue {
     const statusText = (() => {
       if (game.isFinished) {
         return game.isBlack
-          ? '白方勝'
-          : '黑方勝'
+          ? 'White Wins'
+          : 'Black Wins'
       } else {
         return game.isBlack
-          ? '換黑方'
-          : '換白方'
+          ? 'Black'
+          : 'White'
       }
     })()
 
@@ -57,7 +90,7 @@ export default class Home extends Vue {
         <input
           class='status__reset'
           type='button'
-          value='重來'
+          value='Reset'
           onClick={() => {
             this.$data.game = new Gobang()
           }}
@@ -74,7 +107,7 @@ export default class Home extends Vue {
         <input
           class='status__revert'
           type='button'
-          value='悔棋'
+          value='Undo'
           disabled={game.isFinished}
           onClick={() => {
             game.revert()

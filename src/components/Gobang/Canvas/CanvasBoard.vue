@@ -1,35 +1,17 @@
 <script>
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import board from '@/mixins/board'
 import clamp from 'ramda/src/clamp'
 
 @Component({
-  props: {
-    state: {
-      type: Array,
-      required: true,
-    },
-
-    dimension: {
-      type: Number,
-      default: 15,
-    },
-
-    size: {
-      type: Number,
-      default: 500,
-    },
-  },
+  mixins: [board],
 })
 export default class CanvasBoard extends Vue {
   data () {
     return {
       context: null,
     }
-  }
-
-  get gap () {
-    return this.$props.size / (this.$props.dimension + 1)
   }
 
   render () {
@@ -55,7 +37,7 @@ export default class CanvasBoard extends Vue {
     const ctx = this.$data.context
     ctx.beginPath()
 
-    Array(this.$props.dimension + 1)
+    Array(this.$props.dimension + 2)
       .fill(null)
       .forEach((_, index) => {
         // draw vertical
@@ -106,9 +88,7 @@ export default class CanvasBoard extends Vue {
 }
 </script>
 
-<style>
-canvas {
-  border: 1px solid black;
-  background: #C19A6B;
-}
+<style lang='sass' scoped>
+canvas
+  background: #C19A6B
 </style>
