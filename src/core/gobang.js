@@ -1,8 +1,18 @@
 import clamp from 'ramda/src/clamp'
 
 export default class Gobang {
-  constructor ({ dimension = 15, isBlack = true } = {}) {
+  /**
+   * @param {number} dimension dimension of board
+   * @param {boolean} isBlack first player is black or not
+   * @param {number} howToWin how many chess in a row to win
+   */
+  constructor ({
+    dimension = 15,
+    isBlack = true,
+    howToWin = 5,
+  } = {}) {
     this.dimension = dimension
+    this.howToWin = howToWin
     this.state = Array(dimension)
       .fill(null)
       .map(() => Array(dimension).fill(null))
@@ -88,6 +98,6 @@ export default class Gobang {
       getCount(add, add)(row, col) +
       getCount(subtract, subtract)(row, col),
     ]
-      .some(count => count > 5)
+      .some(count => count > this.howToWin)
   }
 }

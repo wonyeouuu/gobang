@@ -7,7 +7,7 @@ export default {
 
     dimension: {
       type: Number,
-      default: 15,
+      required: true,
     },
 
     size: {

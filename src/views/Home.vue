@@ -36,6 +36,7 @@ export default class Home extends Vue {
         {browserSupportCanvas() && (
           <CanvasBoard
             state={this.$data.game.state}
+            dimension={this.$data.game.dimension}
             onMove={makeMoveHandler(
               ({ row, col }) => {
                 this.$data.game.add(row, col)
@@ -51,6 +52,7 @@ export default class Home extends Vue {
         {browserSupportDom() && (
           <DomBoard
             state={this.$data.game.state}
+            dimension={this.$data.game.dimension}
             onMove={makeMoveHandler(
               ({ row, col }) => {
                 this.$data.game.add(row, col)
