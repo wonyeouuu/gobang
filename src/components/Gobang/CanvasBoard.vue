@@ -99,9 +99,9 @@ export default class CanvasBoard extends Vue {
     const row = calculateClick(y)
     const col = calculateClick(x)
 
-    this.$props.state[row][col] === null && (
+    if (this.$props.state[row][col] === null) {
       this.$emit('move', { row, col })
-    )
+    }
   }
 }
 </script>

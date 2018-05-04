@@ -9,14 +9,46 @@ export default class Gobang {
 
     this.isBlack = isBlack
     this.isFinished = false
+    this.history = []
   }
 
   add (row, col) {
     this.state[row][col] = this.isBlack
+    this.addHistory(row, col, this.isBlack)
     this.isBlack = !this.isBlack
     if (this.isWinningStep(row, col)) {
       this.isFinished = true
     }
+  }
+
+  addHistory (row, col, isBlack) {
+    this.history = [
+      ...this.history,
+      {
+        row,
+        col,
+        isBlack: this.isBlack,
+      },
+    ]
+  }
+
+  revert (todo = 1) {
+    if (todo < 0) {
+      throw new RangeError('revert.count')
+    }
+
+    if (this.isFinished || this.history.length === 0) {
+      return false
+    }
+
+    const moment = this.history[this.history.length - 1]
+    this.state[moment.row][moment.col] = null
+    this.history = this.history.slice(0, -1)
+    this.isBlack = !this.isBlack
+
+    return todo === 1
+      ? moment
+      : this.revert(todo - 1)
   }
 
   isWinningStep (row, col) {
